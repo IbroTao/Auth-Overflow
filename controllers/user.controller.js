@@ -6,9 +6,12 @@ const {
   checkPermission,
   createHash,
   attachCookiesToResponse,
+  createUserDetails,
   sendPasswordResetToken,
   sendVerificationEmail,
 } = require("../utils");
+const {Tokens} = require('../models/token.model')
+const { hashSync, compareSync } = require("bcryptjs");
 
 const registerUser = async (req, res) => {
   const { email, name, password } = req.body;
@@ -26,7 +29,7 @@ const registerUser = async (req, res) => {
   const user = await Users.create({
     name,
     email,
-    password,
+    password: hashSync(password, 10),
     verificationToken,
   });
 
@@ -61,3 +64,34 @@ const verifyEmail = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ msg: "Email verified" });
 };
+
+const loginUser = async(req, res) => {
+    const {email, password} = req.body;
+    if(!email || !password) {
+        throw new CustomError.BadRequestError("Please provide email and password")
+    };
+
+    const user = await Users.findOne({ email });
+    if(!user) {
+        throw new CustomError.notFoundError("User not found")
+    };
+
+    const comparePassword = compareSync(password, user.password);
+    if(!comparePassword) {
+        throw new CustomError.notAuthenticatedError("Invalid Credentials");
+    }
+
+    if(user.isVerified) {
+        throw new CustomError.notAuthenticatedError("Please verify this email");
+    };
+
+    const tokenUser = createUserDetails(user);
+    let refreshToken = "";
+    const checkToken = await Tokens.findOne({user._id});
+}
+
+module.exports = {
+    registerUser,
+    verifyEmail,
+    loginUser
+}
