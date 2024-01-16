@@ -11,4 +11,4 @@ const sendPasswordResetEmail = async ({ token, name }) => {
   });
 };
 
-module.exports = sendPasswordResetEmail;
+module.exports = { sendPasswordResetEmail };

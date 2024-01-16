@@ -1,8 +1,7 @@
 const sendEmail = require("./sendEmail");
 
 const sendVerificationEmail = async ({ name, email, verificationToken }) => {
-  const verifyEmail = `http://localhost:2024/api/user/verify-email?token=${verificationToken}&email=${email}`;
-  const message = `<p>Please confirm your email by clicking on the following link: <a href="${verifyEmail}"></p>`;
+  const message = `<p>Please confirm your email by clicking on the following link: <a href="http://localhost:2024/api/user/verify-email?token=${verificationToken}&email=${email}"></p>`;
 
   return sendEmail({
     to: email,
@@ -11,4 +10,4 @@ const sendVerificationEmail = async ({ name, email, verificationToken }) => {
   });
 };
 
-module.exports = sendVerificationEmail;
+module.exports = { sendVerificationEmail };

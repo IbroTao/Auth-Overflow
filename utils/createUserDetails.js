@@ -6,4 +6,4 @@ const createUserDetails = (user) => {
   };
 };
 
-module.exports = createUserDetails;
+module.exports = { createUserDetails };

@@ -23,8 +23,8 @@ app.use(cookieParser(process.env.SECRET));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(notFound);
-app.use(errorHandlerMiddleware);
+// app.use(notFound);
+// app.use(errorHandlerMiddleware);
 app.use(fileUpload());
 app.use(mongoSanitize());
 app.use(

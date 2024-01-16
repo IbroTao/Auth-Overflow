@@ -6,4 +6,4 @@ const checkPermissions = (requestUser, resourceUserId) => {
   throw new CustomError.notAllowed("Not authorized to access this route!");
 };
 
-module.exports = checkPermissions;
+module.exports = { checkPermissions };

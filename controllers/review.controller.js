@@ -1,4 +1,3 @@
-const { Reviews } = require("../models/review.model");
 const { Products } = require("../models/product.model");
 
 const { StatusCodes } = require("http-status-codes");

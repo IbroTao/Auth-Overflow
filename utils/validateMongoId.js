@@ -7,4 +7,4 @@ const validateMongoId = (id) => {
     throw CustomError.notFoundError("This id is not valid or not found!");
 };
 
-module.exports = validateMongoId;
+module.exports = { validateMongoId };

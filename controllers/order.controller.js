@@ -4,7 +4,7 @@ const { Carts } = require("../models/cart.model");
 const { Users } = require("../models/user.model");
 const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
-const { checkPermissions, validateMongoId } = require("../utils");
+const { validateMongoId } = require("../utils/validateMongoId");
 const uniqid = require("uniqid");
 
 const addToCart = async (req, res) => {
@@ -115,60 +115,66 @@ const createOrder = async (req, res) => {
     .json({ message: "Order created successfully" });
 };
 
-const getAllOrders = async(req, res) => {
-    try{
-      const orders = await Orders.find({});
-      res.status(StatusCodes.OK).json({orders, count: orders.length})
-    }catch(err){
-        throw new CustomError
-    }
+const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Orders.find({});
+    res.status(StatusCodes.OK).json({ orders, count: orders.length });
+  } catch (err) {
+    throw new CustomError();
+  }
 };
 
-const getSingleOrder = async(req, res) => {
-  const {id} = req.params;
+const getSingleOrder = async (req, res) => {
+  const { id } = req.params;
   validateMongoId(id);
-  try{
-    const order = await Orders.findOne({id});
-    if(!order) {
+  try {
+    const order = await Orders.findOne({ id });
+    if (!order) {
       throw new CustomError.notFoundError(`No order with this id: ${id}`);
     }
-    res.status(StatusCodes.OK).json({order});
-  }catch(error){
+    res.status(StatusCodes.OK).json({ order });
+  } catch (error) {
     throw new CustomError.BadRequestError(error);
   }
 };
 
-const getCurrentUserOrders = async(req, res) => {
-  const {_id} = req.user;
+const getCurrentUserOrders = async (req, res) => {
+  const { _id } = req.user;
   validateMongoId(_id);
-  try{
+  try {
     const user = await Users.findById(_id);
-    const order = await Orders.findOne({orderBy: user._id});
-  }catch(error){
+    const order = await Orders.findOne({ orderBy: user._id });
+  } catch (error) {
     throw new CustomError.BadRequestError(error);
   }
 };
 
-const updateOrderStatus = async(req, res) => {
-  const {status} = req.body;
-  const {id} = req.params;
+const updateOrderStatus = async (req, res) => {
+  const { status } = req.body;
+  const { id } = req.params;
   validateMongoId(id);
-  try{
-    const order = await Orders.findByIdAndUpdate(id, {
-      paymentIntents: {
-        status: status
+  try {
+    const order = await Orders.findByIdAndUpdate(
+      id,
+      {
+        paymentIntents: {
+          status: status,
+        },
+      },
+      {
+        new: true,
       }
-    }, {
-      new: true
-    });
-    if(!order) {
-      throw new CustomError.notFoundError("Order not found")
+    );
+    if (!order) {
+      throw new CustomError.notFoundError("Order not found");
     }
-    res.status(StatusCodes.OK).json({message: "Order status updated", order: order})''
-  }catch(error){
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Order status updated", order: order });
+  } catch (error) {
     throw new CustomError.BadRequestError(error);
   }
-}
+};
 
 module.exports = {
   emptyCart,
@@ -178,5 +184,5 @@ module.exports = {
   updateOrderStatus,
   getSingleOrder,
   getAllOrders,
-  getCurrentUserOrders
+  getCurrentUserOrders,
 };

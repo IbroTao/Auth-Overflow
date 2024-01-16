@@ -10,8 +10,8 @@ const isTokenValid = (token) => {
 };
 
 const attachCookiesToResponse = ({ req, res, refreshToken }) => {
-  const accessToken = createJWT({ payload: { user } });
-  const refreshToken = createJWT({ payload: { user, refreshToken } });
+  const accessTokenJWT = createJWT({ payload: { user } });
+  const refreshTokenJWT = createJWT({ payload: { user, refreshToken } });
 
   const oneDay = 1000 * 60 * 60 * 24;
   const thrityDays = 1000 * 60 * 60 * 24 * 30;

@@ -2,15 +2,12 @@ const { Users } = require("../models/user.model");
 const { StatusCodes } = require("http-status-codes");
 const crypto = require("crypto");
 const CustomError = require("../errors");
-const {
-  checkPermission,
-  createHash,
-  attachCookiesToResponse,
-  createUserDetails,
-  sendPasswordResetToken,
-  sendVerificationEmail,
-  validateMongoId,
-} = require("../utils");
+const { checkPermissions } = require("../utils/checkPermission");
+const { sendPasswordResetEmail } = require("../utils/sendPasswordResetToken");
+const { validateMongoId } = require("../utils/validateMongoId");
+const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
+const { createUserDetails } = require("../utils/createUserDetails");
+const { attachCookiesToResponse } = require("../utilis/jwt");
 const { Tokens } = require("../models/token.model");
 const { hashSync, compareSync } = require("bcryptjs");
 
@@ -42,7 +39,7 @@ const registerUser = async (req, res) => {
 
   res.status(StatusCodes.CREATED).json({
     msg: "Success! Please check your email to verify account",
-    user: user
+    user: user,
   });
 };
 
@@ -83,7 +80,7 @@ const loginUser = async (req, res) => {
     throw new CustomError.notAuthenticatedError("Invalid Credentials");
   }
 
-  if (user.isVerified) {
+  if (!user.isVerified) {
     throw new CustomError.notAuthenticatedError("Please verify this email");
   }
 
