@@ -49,9 +49,33 @@ const updateUser = async(req, res) => {
     attachCookiesToResponse({user: tokenUser});
     res.status(StatusCodes.OK).json({user: tokenUser})
 }
+
+const updateUserPassword = async(req, res) => {
+    const {_id} = req.user;
+    validateMongoId(_id);
+    const {oldPassword, newPassword} = req.body;
+    if(!oldPassword || !newPassword) {
+        throw new CustomError.BadRequestError("Please provide both values")
+    }
+
+    const user = await Users.findOne({_id});
+    if(!user) {
+        throw new CustomError.notFoundError("User not found");
+    }
+
+    const comparePassword = compareSync(user.password, oldPassword);
+    if(!comparePassword) {
+        throw new CustomError.BadRequestError("Invalid Credentials!");
+    }
+
+    user.password = newPassword;
+    await user.save();
+    res.status(StatusCodes.OK).json({msg: "Success! Password updated."})
+}
 module.exports = {
   getAllUsers,
   getSingleUser,
   showCurrentUser,
-  updateUser
+  updateUser,
+  updateUserPassword
 };
