@@ -42,6 +42,7 @@ const registerUser = async (req, res) => {
 
   res.status(StatusCodes.CREATED).json({
     msg: "Success! Please check your email to verify account",
+    user: user
   });
 };
 

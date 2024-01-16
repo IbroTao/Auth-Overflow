@@ -26,4 +26,4 @@ const errorHandlerMiddleware = async (err, req, res, next) => {
     .json({ message: customError.message });
 };
 
-module.exports = errorHandlerMiddleware;
+module.exports = { errorHandlerMiddleware };

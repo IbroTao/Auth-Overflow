@@ -63,3 +63,7 @@ const rateProduct = async (req, res) => {
     throw new CustomError.BadRequestError(error);
   }
 };
+
+module.exports = {
+  rateProduct,
+};
