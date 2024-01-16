@@ -47,23 +47,25 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    inventory: {
-      type: Number,
-      required: true,
-      default: 15,
-    },
-    averageRating: {
+    sold: {
       type: Number,
       default: 0,
     },
-    numOfReviews: {
-      type: Number,
+    ratings: [
+      {
+        stars: Number,
+        comment: {
+          type: String,
+        },
+        postedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "users",
+        },
+      },
+    ],
+    totalRatings: {
+      type: String,
       default: 0,
-    },
-    orderBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
     },
   },
   {
