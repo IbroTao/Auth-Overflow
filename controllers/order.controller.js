@@ -80,7 +80,7 @@ const createOrder = async (req, res) => {
     );
   }
   const user = await Users.findById({ _id });
-  const userCart = await Carts.findOne({ user._id });
+  const userCart = await Carts.findOne({ orderBy: user._id });
 
   let totalAmount = userCart.cartTotal + tax + shippingFee;
   let newOrder = await Orders.create({
