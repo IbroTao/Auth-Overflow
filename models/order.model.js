@@ -24,18 +24,14 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    subtotal: {
-      type: Number,
-      required: true,
-    },
-    total: {
-      type: Number,
+    totalAmount: {
+      type: String,
       required: true,
     },
     status: {
       type: String,
-      enum: ["pending", "cancelled", "paid", "delivered", "failed"],
-      default: "pending",
+      enum: ["Pending", "Cancelled", "Paid", "Delivered", "Failed"],
+      default: "Pending",
     },
     orderBy: {
       type: mongoose.Schema.Types.ObjectId,
