@@ -5,6 +5,7 @@ const {
   attachCookiesToResponse,
   createHash,
   checkPermissions,
+  createUserDetails
   validateMongoId,
 } = require("../utils");
 
@@ -25,7 +26,32 @@ const getSingleUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user: user });
 };
 
+const showCurrentUser = async(req, res) => {
+    res.status(Status.Codes).json({user: req.user});
+};
+
+const updateUser = async(req, res) => {
+    const {_id} = req.user;
+    validateMongoId(_id);
+    const {name, email } = req.body;
+    if(!email || !name) {
+        throw new CustomError.BadRequestError("Please provide all values")
+    };
+    const user = await Users.findByIdAndUpdate(_id, {
+        name,
+        email
+    }, {
+        new: true
+    });
+    await user.save();
+
+    const tokenUser = createUserDetails(user);
+    attachCookiesToResponse({user: tokenUser});
+    res.status(StatusCodes.OK).json({user: tokenUser})
+}
 module.exports = {
   getAllUsers,
   getSingleUser,
+  showCurrentUser,
+  updateUser
 };
