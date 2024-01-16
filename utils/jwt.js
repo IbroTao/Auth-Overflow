@@ -5,7 +5,7 @@ const createJWT = ({ payload }) => {
   return token;
 };
 
-const isValid = (token) => {
+const isTokenValid = (token) => {
   jwt.verify(token, process.env.SECRET);
 };
 
@@ -29,6 +29,6 @@ const attachCookiesToResponse = ({ req, res, refreshToken }) => {
 
 module.exports = {
   attachCookiesToResponse,
-  isValid,
+  isTokenValid,
   createJWT,
 };
