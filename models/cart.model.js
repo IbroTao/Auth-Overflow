@@ -8,6 +8,9 @@ const cartSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "products",
         },
+        count: {
+          type: Number,
+        },
         color: {
           type: String,
         },
