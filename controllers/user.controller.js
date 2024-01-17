@@ -71,10 +71,27 @@ const updateUserPassword = async (req, res) => {
   await user.save();
   res.status(StatusCodes.OK).json({ msg: "Success! Password updated." });
 };
+
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+  validateMongoId(id);
+  try {
+    const user = await Users.findByIdAndDelete(id);
+
+    if (!user) {
+      throw new CustomError.notFoundError("User not found!");
+    }
+
+    res.status(StatusCodes.OK).json({ message: "User deleted!" });
+  } catch (error) {
+    throw new CustomError.BadRequest(error);
+  }
+};
 module.exports = {
   getAllUsers,
   getSingleUser,
   showCurrentUser,
   updateUser,
   updateUserPassword,
+  deleteUser,
 };

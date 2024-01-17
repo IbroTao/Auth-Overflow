@@ -18,6 +18,7 @@ const {
   showCurrentUser,
   updateUser,
   updateUserPassword,
+  deleteUser,
 } = require("../controllers/user.controller");
 
 router.route("/").get(authenticateUser, authorizeRoles("admin", getAllUsers));
@@ -25,7 +26,10 @@ router.route("/current").get(authenticateUser, showCurrentUser);
 router.route("/reset-password/:token").post(resetPassword);
 router.route("/forget-password-token").post(forgotPassword);
 router.route("/verify-email").post(verifyEmail);
-router.route("/:id").get(authenticateUser, getSingleUser);
+router
+  .route("/:id")
+  .get(authenticateUser, getSingleUser)
+  .delete(authenticateUser, deleteUser);
 router.route("/password").put(authenticateUser, updateUserPassword);
 router.route("/").put(authenticateUser, updateUser);
 

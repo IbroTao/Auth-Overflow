@@ -2,14 +2,10 @@ const { Users } = require("../models/user.model");
 const { StatusCodes } = require("http-status-codes");
 const crypto = require("crypto");
 const CustomError = require("../errors");
-const { checkPermissions } = require("../utils/checkPermission");
 const { sendPasswordResetEmail } = require("../utils/sendPasswordResetToken");
-const { validateMongoId } = require("../utils/validateMongoId");
 const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
-const { createUserDetails } = require("../utils/createUserDetails");
-const { attachCookiesToResponse } = require("../utils/jwt");
-const { Tokens } = require("../models/token.model");
-const { hashSync, compareSync } = require("bcryptjs");
+const bcrypt = require("bcryptjs");
+const { generateRefreshToken } = require("../configs/generateRefrehToken");
 
 const registerUser = async (req, res) => {
   const { email, name, password } = req.body;
@@ -27,7 +23,7 @@ const registerUser = async (req, res) => {
   const user = await Users.create({
     name,
     email,
-    password: hashSync(password, 10),
+    password: bcrypt.hashSync(password, 10),
     verificationToken,
   });
 
@@ -75,7 +71,7 @@ const loginUser = async (req, res) => {
     throw new CustomError.notFoundError("User not found");
   }
 
-  const comparePassword = compareSync(password, user.password);
+  const comparePassword = bcrypt.compareSync(password, user.password);
   if (!comparePassword) {
     throw new CustomError.notAuthenticatedError("Invalid Credentials");
   }
@@ -84,27 +80,21 @@ const loginUser = async (req, res) => {
     throw new CustomError.notAuthenticatedError("Please verify this email");
   }
 
-  const tokenUser = createUserDetails(user);
-  let refreshToken = "";
-  const checkToken = await Tokens.findOne({ userId: user._id });
-  if (checkToken) {
-    const { isValid } = checkToken;
-    if (!isValid) {
-      throw new CustomError.notAuthenticatedError("Invalid Credentials");
+  const refreshToken = generateRefreshToken(user._id);
+  const loginUser = await Users.findByIdAndUpdate(
+    user._id,
+    {
+      refreshToken: refreshToken,
+    },
+    {
+      new: true,
     }
-    refreshToken = checkToken.refreshToken;
-    attachCookiesToResponse({ user: tokenUser, refreshToken });
-    return;
-  }
-
-  refreshToken = crypto.randomBytes(40).toString("hex");
-  const userAgent = req.headers["user-agent"];
-  const ip = req.ip;
-  const userToken = { refreshToken, ip, userAgent, userId: user._id };
-
-  await Tokens.create(userToken);
-  attachCookiesToResponse({ user: tokenUser, refreshToken });
-  res.status(StatusCodes.OK).json({ user: tokenUser });
+  );
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    maxAge: 72 * 60 * 60 * 1000,
+  });
+  res.status(StatusCodes.OK).json({ msg: "User logged in", user });
 };
 
 const logoutUser = async (req, res) => {
@@ -136,7 +126,7 @@ const logoutUser = async (req, res) => {
 };
 
 const forgotPassword = async (req, res) => {
-  const { email, name } = req.body;
+  const { email } = req.body;
   if (!email) {
     throw new CustomError.BadRequestError("Please provide valid email");
   }
@@ -147,7 +137,7 @@ const forgotPassword = async (req, res) => {
   }
   const resetToken = crypto.randomBytes(70).toString("hex");
 
-  await sendPasswordResetToken({
+  await sendPasswordResetEmail({
     name: user.name,
     token: resetToken,
   });
