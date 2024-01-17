@@ -7,7 +7,7 @@ const { sendPasswordResetEmail } = require("../utils/sendPasswordResetToken");
 const { validateMongoId } = require("../utils/validateMongoId");
 const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
 const { createUserDetails } = require("../utils/createUserDetails");
-const { attachCookiesToResponse } = require("../utilis/jwt");
+const { attachCookiesToResponse } = require("../utils/jwt");
 const { Tokens } = require("../models/token.model");
 const { hashSync, compareSync } = require("bcryptjs");
 
