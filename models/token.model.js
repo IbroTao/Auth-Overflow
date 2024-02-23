@@ -2,12 +2,14 @@ const mongoose = require("mongoose");
 
 const tokenSchema = new mongoose.Schema(
   {
-    refreshToken: {
+    token: {
       type: String,
       required: true,
+      index: true,
     },
-    ip: {
-      type: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
       required: true,
     },
     userAgent: {

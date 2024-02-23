@@ -5,7 +5,7 @@ const CustomError = require("../errors");
 const { sendPasswordResetEmail } = require("../utils/sendPasswordResetToken");
 const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
 const bcrypt = require("bcryptjs");
-const { generateRefreshToken } = require("../configs/generateRefrehToken");
+const { generateRefreshToken } = require("../configs/generateRefreshToken");
 
 const registerUser = async (req, res) => {
   const { email, name, password } = req.body;
