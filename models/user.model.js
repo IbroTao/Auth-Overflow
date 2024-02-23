@@ -44,6 +44,11 @@ const userSchema = new mongoose.Schema(
     passwordResetTokenExpiration: {
       type: Date,
     },
+    gender: {
+      type: String,
+      minlength: 1,
+      enum: ["male", "female", "not-say"],
+    },
   },
   {
     timestamps: true,

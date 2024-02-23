@@ -127,10 +127,6 @@ const logoutUser = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  if (!email) {
-    throw new CustomError.BadRequestError("Please provide valid email");
-  }
-
   const user = await Users.findOne({ email });
   if (!user) {
     throw new CustomError.notFoundError("User not found");
