@@ -12,8 +12,9 @@ const tokenSchema = new mongoose.Schema(
       ref: "users",
       required: true,
     },
-    userAgent: {
+    type: {
       type: String,
+      enum: ["access", "refresh", "resetPassword", "verifyEmail"],
       required: true,
     },
     isValid: {
