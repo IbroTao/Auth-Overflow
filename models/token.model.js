@@ -17,9 +17,9 @@ const tokenSchema = new mongoose.Schema(
       enum: ["access", "refresh", "resetPassword", "verifyEmail"],
       required: true,
     },
-    isValid: {
-      type: Boolean,
-      default: true,
+    expires: {
+      type: Date,
+      required: true,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
