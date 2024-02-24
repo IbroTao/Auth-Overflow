@@ -21,10 +21,9 @@ const tokenSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "users",
+    blacklisted: {
+      type: Boolean,
+      default: false,
     },
   },
   {
